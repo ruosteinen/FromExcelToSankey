@@ -9,7 +9,12 @@ df = pd.read_excel("Sankey ARR.xlsx", sheet_name="Labels", skiprows=[])
 #converting columns from Excel to arrays
 label = df.iloc[:, 0].to_numpy()
 target = df.iloc[:, 1].to_numpy()
+
 combined_data = np.concatenate((label, target))
+
+value = df.iloc[:, 2].to_numpy()
+filtered_array = value[~np.isnan(value)]
+
 
 #dictionary of unique strings
 unique_dict = {}
@@ -31,11 +36,10 @@ for item in combined_data:
 label_numbers = [unique_dict[item] for item in label if not pd.isna(item)]
 target_numbers = [unique_dict[item] for item in target if not pd.isna(item)]
 
-
+'''
 for item, number in unique_dict.items():
     print(f"{item}: №{number}")
 
-'''
 print(f"\nКоличество уникальных элементов в объединенных столбцах (исключая null): {len(unique_dict)}")
 
 print("\nПреобразованные данные из label:")
@@ -43,13 +47,12 @@ print(label_numbers)
 
 print("\nПреобразованные данные target:")
 print(target_numbers)
-'''
 
-value = df.iloc[:, 2].to_numpy()
 
 for item in value:
     if not pd.isna(item):
         print(item)
+'''
 
 
 fig = go.Figure(go.Sankey(
@@ -70,7 +73,7 @@ fig = go.Figure(go.Sankey(
     link = {
         "source": label_numbers,
         "target": target_numbers,
-        "value": value
+        "value": filtered_array
     }
 ))
 
