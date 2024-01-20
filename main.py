@@ -26,6 +26,9 @@ for item in combined_data:
 labels_numbers = [unique_dict[item] for item in label if not pd.isna(item)]
 target_numbers = [unique_dict[item] for item in target if not pd.isna(item)]
 
+print(labels_numbers)
+print(target_numbers)
+
 labels_names = [item for item in label if not pd.isna(item) and item in unique_dict]
 
 # print labels_names for checking
