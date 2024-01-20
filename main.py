@@ -14,25 +14,23 @@ combined_data = np.concatenate((label, target))
 #dictionary of unique strings
 unique_dict = {}
 
-item_number = 1
+label_names = []
+
+item_number = 0
 
 for item in combined_data:
     if not pd.isna(item) and item not in unique_dict:
         unique_dict[item] = item_number
+        label_names.append(item)
         item_number += 1
 
 
+#print(label_names)
+
 #Replacing elements in label and target with numbers from the dictionary
-labels_numbers = [unique_dict[item] for item in label if not pd.isna(item)]
+label_numbers = [unique_dict[item] for item in label if not pd.isna(item)]
 target_numbers = [unique_dict[item] for item in target if not pd.isna(item)]
 
-print(labels_numbers)
-print(target_numbers)
-
-labels_names = [item for item in label if not pd.isna(item) and item in unique_dict]
-
-# print labels_names for checking
-#print(labels_names)
 
 for item, number in unique_dict.items():
     print(f"{item}: №{number}")
@@ -41,12 +39,11 @@ for item, number in unique_dict.items():
 print(f"\nКоличество уникальных элементов в объединенных столбцах (исключая null): {len(unique_dict)}")
 
 print("\nПреобразованные данные из label:")
-print(labels_numbers)
+print(label_numbers)
 
 print("\nПреобразованные данные target:")
 print(target_numbers)
 '''
-
 
 value = df.iloc[:, 2].to_numpy()
 
@@ -64,14 +61,14 @@ fig = go.Figure(go.Sankey(
     arrangement = "snap",
 
     node = {
-        "label": labels_names,
+        "label": label_names,
         "pad": 15,
         "thickness": 20,
         "line": {"color": "black", "width": 0.5}
     },
 
     link = {
-        "source": labels_numbers,
+        "source": label_numbers,
         "target": target_numbers,
         "value": value
     }
