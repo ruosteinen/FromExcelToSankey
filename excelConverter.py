@@ -43,10 +43,9 @@ def create_sankey_diagram(df):
     for item, number in unique_dict.items():
         print(f"{item}: №{number}")
 
-    print(len(unique_dict))
-
 
     print(label_numbers)
+
 
     print(target_numbers)
 
