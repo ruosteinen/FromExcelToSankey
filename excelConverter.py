@@ -62,7 +62,7 @@ def create_sankey_diagram(df):
         #to reduce the intersection of links
         #and improve the readability of the diagram
 
-        arrangement = "snap",
+        arrangement = "freeform",
 
         node = {
             "label": label_names,
