@@ -12,13 +12,16 @@ def create_sankey_diagram(df):
     #converting columns from Excel to arrays
     label = df.iloc[:, 0].to_numpy()
     target = df.iloc[:, 1].to_numpy()
-
+    
     combined_data = np.concatenate((label, target))
 
     value = df.iloc[:, 2].to_numpy()
     filtered_array = value[~np.isnan(value)]
 
+    percent = df.iloc[:, 3].to_numpy()
 
+    percentWitoutNuN = percent[~np.isnan(percent)]
+    
     #dictionary of unique strings
     unique_dict = {}
 
@@ -65,12 +68,12 @@ def create_sankey_diagram(df):
         arrangement = "freeform",
 
         node = {
-            "label": label_names,
+            "label": [f"{name}<br>${value}<br>{perc}" for name, value,perc in zip(label_names, filtered_array,percentWitoutNuN)],
             "pad": 15,
             "thickness": 20,
             "line": {"color": "black", "width": 0.5}
         },
-
+        
         link = {
             "source": label_numbers,
             "target": target_numbers,
@@ -78,7 +81,8 @@ def create_sankey_diagram(df):
         }
     ))
 
-    fig.update_layout(title_text="Sankey for Andrei", font_size=10)
+    
+    fig.update_layout(title_text="Sankey for Andrei", font_size=12)
     fig.show()
 
     return fig
