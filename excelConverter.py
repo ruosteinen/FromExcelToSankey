@@ -2,89 +2,65 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-
-#df = pd.read_excel("Sankey ARR.xlsx", sheet_name="Labels", skiprows=[])
-
 def create_sankey_diagram(df):
-    #xls = pd.ExcelFile("Sankey ARR.xlsx")
-
-
-    #converting columns from Excel to arrays
     label = df.iloc[:, 0].to_numpy()
     target = df.iloc[:, 1].to_numpy()
-    
     combined_data = np.concatenate((label, target))
-
     value = df.iloc[:, 2].to_numpy()
-    filtered_array = value[~np.isnan(value)]
-
-    percent = df.iloc[:, 3].to_numpy()
-
-    percentWitoutNuN = percent[~np.isnan(percent)]
+    percent = df.iloc[:, 3].to_numpy() * 100
     
-    #dictionary of unique strings
     unique_dict = {}
-
     label_names = []
-
     item_number = 0
-
     for item in combined_data:
         if not pd.isna(item) and item not in unique_dict:
             unique_dict[item] = item_number
             label_names.append(item)
             item_number += 1
 
+    percent_info_dict = {}
+    for i, (lbl, tgt) in enumerate(zip(label, target)):
+        if not pd.isna(lbl) and not pd.isna(tgt) and not pd.isna(value[i]):
+            if lbl not in percent_info_dict:
+                percent_info_dict[lbl] = []
 
-    #print(label_names)
+                
+            percent_info_dict[lbl].append((tgt, value[i], percent[i]))
 
-    #Replacing elements in label and target with numbers from the dictionary
+    updated_label_names = []
+    for name in label_names:
+        if name in percent_info_dict:
+            
+            info_str = "<br>" + "<br>".join([f"{tgt}: ${str(v)} ({str(p)}%)" for tgt, v, p in percent_info_dict[name]])
+            updated_label_names.append(f"{name}<br>{info_str}")
+        else:
+            updated_label_names.append(f"{name}<br>")
+
     label_numbers = [unique_dict[item] for item in label if not pd.isna(item)]
     target_numbers = [unique_dict[item] for item in target if not pd.isna(item)]
 
-    '''
-    for item, number in unique_dict.items():
-        print(f"{item}: №{number}")
-
-
-    print(label_numbers)
-
-
-    print(target_numbers)
-
-
-    for item in value:
-        if not pd.isna(item):
-            print(item)
-    '''
-
-
     fig = go.Figure(go.Sankey(
-
-        #"snap" means that , nodes are automatically adjusted
-        #to reduce the intersection of links
-        #and improve the readability of the diagram
-
-        arrangement = "freeform",
-
-        node = {
-            "label": [f"{name}<br>${value}<br>{perc}" for name, value,perc in zip(label_names, filtered_array,percentWitoutNuN)],
+        arrangement="freeform",
+        node={
+            "label": updated_label_names,
             "pad": 15,
             "thickness": 20,
-            "line": {"color": "black", "width": 0.5}
+            "line": {"color": "black", "width": 0.5},
         },
-        
-        link = {
+        link={
             "source": label_numbers,
             "target": target_numbers,
-            "value": filtered_array
+            "value": value[~np.isnan(value)]  
         }
     ))
 
-    
-    fig.update_layout(title_text="Sankey for Andrei", font_size=12)
+    fig.update_layout(title_text="Sankey Diagram with Values and Percentages", font_size=12)
     fig.show()
 
     return fig
 
-#create_sankey_diagram(df)
+#Debug
+
+if __name__ == "__main__":
+    df = pd.read_excel('excel.xlsx', sheet_name='sankey')
+    create_sankey_diagram(df)
