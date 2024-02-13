@@ -11,6 +11,12 @@ def create_sankey_diagram(df):
     value = df.iloc[:, 2].to_numpy()
     percent = df.iloc[:, 3].to_numpy() * 100
 
+    value_rounded_down = np.floor(value).astype(int)
+    percent_rounded_down = np.floor(percent).astype(int)
+    
+    formatted_numbers = [f'{num:,}' for num in value_rounded_down]
+
+
     unique_dict = {}
     label_names = []
     for item in combined_data:
@@ -20,10 +26,10 @@ def create_sankey_diagram(df):
 
     percent_info_dict = {}
     for i, (lbl, tgt) in enumerate(zip(label, target)):
-        if not pd.isna(lbl) and not pd.isna(tgt) and not pd.isna(value[i]):
+        if not pd.isna(lbl) and not pd.isna(tgt) and not pd.isna(formatted_numbers[i]):
             if lbl not in percent_info_dict:
                 percent_info_dict[lbl] = []
-            percent_info_dict[lbl].append((tgt, value[i], percent[i]))
+            percent_info_dict[lbl].append((tgt, formatted_numbers[i], percent_rounded_down[i]))
 
     updated_label_names = []
     for name in label_names:
